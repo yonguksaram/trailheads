@@ -1,0 +1,74 @@
+public class Visualforce_25_Three_controller {
+    public String sortingOrder = ' ORDER BY Name ASC NULLS LAST '; 
+    public String searchName{get;set;}
+    public String searchTitle{get;set;}
+    public String searchAccountName{get;set;}
+    public String searchPhone{get;set;}
+    public String searchEmail{get;set;}
+    public String searchMobile{get;set;}
+    public String query = '';
+
+    
+    
+    public Visualforce_25_Three_controller(ApexPages.StandardSetController controller) {
+        setCon = controller;      
+    }
+    
+    public ApexPages.StandardSetController setCon { get {
+        if (setCon == null) {
+            setCon = new ApexPages.StandardSetController(Database.getQueryLocator(query));
+        }
+        return setCon;
+    }
+                                                    set;}
+    
+    public List<Contact> getContacts() {
+        return (List<Contact>) setCon.getRecords();
+        
+    }
+    
+    public String getSortingOrder(){
+        return sortingOrder;
+    }
+    
+    public void search() {
+        sortingOrder = ' ORDER BY Name ASC NULLS LAST ';
+        query = getQueryValue(searchName, searchTitle, searchAccountName, searchPhone, searchEmail, searchMobile, sortingOrder);
+        setCon = new ApexPages.StandardSetController(Database.query(query)); 
+    }
+    
+    public void sortByContactName() {
+            if(sortingOrder == ' ORDER BY Name ASC NULLS LAST ') {
+                sortingOrder = ' ORDER BY Name DESC NULLS LAST ';    
+            } else {
+                sortingOrder = ' ORDER BY Name ASC NULLS LAST ';
+            }
+            
+            query = getQueryValue(searchName, searchTitle, searchAccountName, searchPhone, searchEmail, searchMobile, sortingOrder);
+            
+            setCon = new ApexPages.StandardSetController(Database.query(query));
+    }
+    
+    public static String getQueryValue(String searchName, String searchTitle, String searchAccountName, String searchPhone, String searchEmail, String searchMobile, String sortingOrder){
+        String query = 'SELECT Name, Title, Email, Phone, Account.Name, OwnerId, MobilePhone ' +
+            'FROM Contact WHERE Name LIKE \'%' + searchName + '%\'';
+        if(String.isNotBlank(searchTitle)){
+            query=query+'AND Title LIKE \'%' + searchTitle + '%\'';
+        }
+        if(String.isNotBlank(searchAccountName)){
+            query=query+'And Name LIKE \'%' + searchAccountName + '%\'';
+        }
+        if(!String.isNotBlank(searchPhone)){
+            query=query+'AND Phone LIKE \'%' + searchPhone + '%\'';
+        }
+        if(String.isNotBlank(searchEmail)){
+            query=query+'AND Email LIKE \'%' + searchEmail + '%\'';
+        }
+        
+        if(String.isNotBlank(searchMobile)){
+            query=query+'AND MobilePhone LIKE \'%' + searchMobile + '%\'';
+        }
+        query+=sortingOrder;
+        return query;
+    }
+}
