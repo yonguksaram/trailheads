@@ -1,0 +1,45 @@
+<apex:page standardController="Contact" recordSetVar="contacts">
+    <apex:form id="f" style="width:300px;">
+        
+        <apex:pageBlock id="contactBlock" title="Contacts" >
+            
+            <apex:pageBlockTable value="{!contacts}" var="item">
+                
+                <apex:column >
+                    <apex:facet name="header">Name</apex:facet>
+                    <apex:outputText value="{!item.Name}" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Title</apex:facet>
+                    <apex:outputText value="{!item.Title}" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Account Name</apex:facet>
+                    <apex:outputText value="{!item.Account.Name}" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Phone</apex:facet>
+                    <apex:outputText value="{!item.Phone}" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Email</apex:facet>
+                    <apex:outputText value="{!item.Email}" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Mobile Phone</apex:facet>
+                    <apex:outputText value="{!item.MobilePhone}" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Contact Owner</apex:facet>
+                    <apex:outputText value="{!item.Owner.Name}" />
+                </apex:column>
+                
+            </apex:pageBlockTable>
+            <apex:panelGrid columns="2">
+                <apex:commandLink action="{!previous}" reRender="contactBlock">Previous</apex:commandlink>
+                <apex:commandLink action="{!next}" reRender="contactBlock">Next</apex:commandlink>
+            </apex:panelGrid>
+        </apex:pageBlock>
+        <apex:variable var="rowNum" value="{!contacts}"/>
+    </apex:form>
+</apex:page>
