@@ -1,0 +1,25 @@
+@isTest(SeeAllData=false)
+private class WeatherCalloutTest {
+    @isTest static void testGotResponse() {
+        WeatherCallout testWeather = new WeatherCallout();
+        Test.setMock(HttpCalloutMock.class, new WeatherCalloutTestMock()); 
+        
+        Test.startTest();  
+        testWeather.learnWeather();
+        Test.stopTest();  
+        
+        System.assertEquals('2018-12-12 15:00:00', testWeather.weatherInfoList[0].dateInfo);
+        System.assertEquals('5.0', testWeather.weatherInfoList[0].tempInfo);
+    }
+    
+    @isTest static void testNoResponse() {
+        WeatherCallout testWeather = new WeatherCallout();
+        Test.setMock(HttpCalloutMock.class, new WeatherCalloutTestNegativeMock()); 
+        
+        Test.startTest();  
+        testWeather.learnWeather();
+        Test.stopTest();  
+        
+        System.assertEquals(0, testWeather.weatherInfoList.size());
+    }
+}
