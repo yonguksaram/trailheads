@@ -1,0 +1,76 @@
+<apex:page standardController="Contact" recordSetVar="contacts" tabstyle="Contact" extensions="Visualforce_25_Three_controller">
+    
+    <apex:form id="refresh">
+
+        <apex:pageblock id="customerPageBlock"> 
+            <div style="margin: 10px 0px">
+                <apex:inputText value="{!SearchName}">
+                    <apex:outputLabel ><span style="margin-right: 7px">Name</span></apex:outputLabel>
+                </apex:inputText>
+                <apex:inputText value="{!SearchTitle}">
+                    <apex:outputLabel ><span style="margin: 0px 7px">Title</span></apex:outputLabel>
+                </apex:inputText>
+                <apex:inputText value="{!searchAccountName}">
+                    <apex:outputLabel ><span style="margin: 0px 7px">Account Name</span></apex:outputLabel>
+                </apex:inputText>
+                <apex:inputText value="{!searchPhone}">
+                    <apex:outputLabel ><span style="margin: 0px 7px">Phone</span></apex:outputLabel>
+                </apex:inputText>
+                <apex:inputText value="{!searchEmail}">
+                    <apex:outputLabel ><span style="margin: 0px 7px">Email</span></apex:outputLabel>
+                </apex:inputText>
+                <apex:inputText value="{!searchMobile}">
+                    <apex:outputLabel ><span style="margin: 0px 7px">Mobile</span></apex:outputLabel>
+                </apex:inputText>
+            </div>
+            <apex:commandButton action="{!search}" value="Search" rerender="refresh"/>
+            <apex:pageblocktable value="{!contacts}" var="cont" id="customerTable">
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:commandLink action="{!sortByContactName}" reRender="refresh" value="{!IF(sortingOrder == ' ORDER BY Name ASC NULLS LAST ', '▼', '▲')}">
+                            <apex:outputText value="Contact's Name" />
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:outputField value="{!cont.Name}"/>   
+                     
+                </apex:column> 
+                <apex:column headerValue="Title">
+                    <apex:outputField value="{!cont.Title}"/>
+                </apex:column> 
+                <apex:column headerValue="Account Name">
+                    <apex:outputField value="{!cont.Account.Name}"/>
+                </apex:column>
+                <apex:column headerValue="Phone">
+                    <apex:outputField value="{!cont.Phone}"/>
+                </apex:column> 
+                <apex:column headerValue="Email">
+                    <apex:outputField value="{!cont.Email}"/>
+                </apex:column>
+                <apex:column headerValue="Mobile">
+                    <apex:outputField value="{!cont.MobilePhone}"/>
+                </apex:column>
+                <apex:column headerValue="Owner">
+                    <apex:outputField value="{!cont.OwnerId}"/>
+                </apex:column>  
+            </apex:pageblocktable>
+            <center>
+                <apex:panelGrid columns="4" cellpadding="4" cellspacing="4">
+                    <apex:commandButton disabled="{!NOT(setCon.hasPrevious)}" action="{!setCon.first}" value="First" rerender="refresh"/>
+                    <apex:commandButton disabled="{!NOT(setCon.hasPrevious)}" action="{!setCon.previous}" value="Previous" rerender="refresh"/>
+                    <apex:commandButton disabled="{!NOT(setCon.hasNext)}" action="{!setCon.next}" value="Next" rerender="refresh"/>
+                    <apex:commandButton disabled="{!NOT(setCon.hasNext)}" action="{!setCon.last}" value="Last" rerender="refresh"/>
+                </apex:panelGrid>
+                <apex:panelGroup >
+                    <apex:outputText value="Records/Page"/>
+                    <apex:selectList value="{!setCon.PageSize}" size="1">
+                        <apex:selectOption itemValue="5" itemLabel="5"/>
+                        <apex:selectOption itemValue="20" itemLabel="20"/>
+                        <apex:selectOption itemValue="50" itemLabel="50"/>
+                        <apex:selectOption itemValue="200" itemLabel="200" />
+                        <apex:actionSupport event="onchange" rerender="refresh"/>
+                    </apex:selectList>
+                </apex:panelGroup>
+            </center>  
+        </apex:pageblock>
+    </apex:form>
+</apex:page>
