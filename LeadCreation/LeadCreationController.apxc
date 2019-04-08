@@ -1,0 +1,47 @@
+public class LeadCreationController {
+    public List<Lead> leadList{get; set;}
+    
+    public LeadCreationController() {
+        leadList = new List<Lead>();
+        for(Integer i = 0;i<5;i++){
+            leadList.add(new Lead());
+        }
+    }
+    
+    public void save() {
+        List<Lead> insertLeadList = new List<Lead>();
+        List<Integer> insertLeadListIndexes = new List<Integer>();
+        try{
+            for(Integer i = 0; i<leadList.size();i++){
+                Lead currentLead = leadList[i].clone();
+                if(LeadCreationController.checkIfFieldsAreNotEmpty(currentLead)){
+                    insertLeadList.add(leadList[i].clone());
+                    insertLeadListIndexes.add(i+1);
+                }
+            }
+            insert insertLeadList;
+            ApexPages.AddMessage(new ApexPages.Message(ApexPages.Severity.CONFIRM,System.Label.Record_s_Created_Successfully));
+            for(Integer i = 0;i<insertLeadListIndexes.size();i++){
+                leadList[insertLeadListIndexes[i]-1] = new Lead();
+            }            
+        } catch (DMLException e){
+            for(Integer i = 0 ; i<e.getNumDml(); i++){
+                Integer numberOfErrorRow = e.getDmlIndex(i);
+                String errorMessage = System.Label.The_error_occured_in_the_following_row + ' ' + insertLeadListIndexes[numberOfErrorRow] + ', ' + e.getDmlMessage(i) ;
+                ApexPages.addMessage(new ApexPages.message(ApexPages.Severity.ERROR, errorMessage));
+            }
+        } 
+    }
+    
+    public PageReference cancel() {
+        leadList.clear();
+        for(Integer i = 0;i<5;i++){
+            leadList.add(new Lead());
+        }
+        return null;
+    }
+    
+    public static Boolean checkIfFieldsAreNotEmpty(Lead l){
+        return (!(String.isEmpty(l.LastName) && String.isEmpty(l.FirstName) && String.isEmpty(l.Email) && String.isEmpty(l.Phone) && String.isEmpty(l.Company)));
+    }
+}
