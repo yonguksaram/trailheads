@@ -1,0 +1,29 @@
+<apex:page controller="LeadCreationController" tabstyle="lead" showHeader="true">
+    <apex:form id="changeStatusForm">
+        <apex:sectionHeader title="{!$Label.Title_of_lead_table}" subtitle="{!$Label.Form_To_Create_Leads}"/>
+        <apex:pageBlock id="liste" >
+            <apex:pageMessages />
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.Save_button}" action="{!save}"/>
+                <apex:commandButton value="{!$Label.Cancel_button}" action="{!cancel}" reRender="liste" immediate="true"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!leadList}" var="item">
+                <apex:column width="150px" headerValue="{!$ObjectType.Lead.Fields.FirstName.Label}">
+                    <apex:inputText value="{!item.FirstName}"/>
+                </apex:column>
+                <apex:column width="150px" headerValue="{!$ObjectType.Lead.Fields.LastName.Label}">
+                    <apex:inputText value="{!item.LastName}"/>
+                </apex:column>
+                <apex:column width="150px" headerValue="{!$ObjectType.Lead.Fields.Email.Label}">
+                    <apex:inputText value="{!item.Email}"/>
+                </apex:column>
+                <apex:column width="150px" headerValue="{!$ObjectType.Lead.Fields.Phone.Label}">
+                    <apex:inputText value="{!item.Phone}"/>
+                </apex:column>
+                <apex:column width="150px" headerValue="{!$ObjectType.Lead.Fields.Company.Label}">
+                    <apex:inputText value="{!item.Company}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
