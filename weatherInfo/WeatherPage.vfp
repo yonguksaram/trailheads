@@ -1,0 +1,35 @@
+<apex:page controller="WeatherCallout">
+    <apex:form >
+        <apex:inputtext value="{!cityName}"/>
+        <apex:commandButton value="Show Temperature" style="color:blue;" action="{!learnWeather}" >
+            <apex:param name="city" value="{!cityName}" />
+        </apex:commandButton>
+    </apex:form>
+    <apex:form >
+        <apex:pageBlock title="Date">
+            <apex:pageBlockTable value="{!weatherInfoList}" var="item">
+                <apex:column width="150px" value="{!item.dateInfo}"/>
+                <apex:column width="150px" value="{!item.tempInfo}"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:pageMessages />
+</apex:page>
+<!--        <table cellspacing="0"> 
+<tr>
+<td width="150px" style="border:2px solid; border-right: 1px solid">
+<apex:pageBlock title="Date">
+<apex:pageBlockTable value="{!datesList}" var="item">
+<apex:column value="{!item}"/>
+</apex:pageBlockTable>
+</apex:pageBlock>
+</td>
+<td width="100px" style="border:2px solid; border-left: 1px solid">
+<apex:pageBlock title="Temperature">
+<apex:pageBlockTable value="{!tempsList}" var="item">
+<apex:column value="{!item}"/>
+</apex:pageBlockTable>
+</apex:pageBlock>
+</td>
+</tr>
+</table> -->
