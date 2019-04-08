@@ -1,0 +1,54 @@
+public class WeatherCallout {
+    public String cityName { get; set; }
+    public List<TempInfo> weatherInfoList { get; set; }
+
+    public void learnWeather() {
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('http://api.openweathermap.org/data/2.5/forecast?q='+cityName+'&APPID=33175dc0c0eb68c5eccc0bd29133acde');
+        request.setMethod('GET');
+        HttpResponse response = http.send(request);
+		List<TempInfo> weatherInfo = new List<TempInfo>();
+        if (response.getStatusCode() == 200) {
+			weatherInfo = WeatherCallout.createWeatherInfoList(response);
+        } else {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'This city is not in the list or is written incorrectly')); 
+        }
+         weatherInfoList = weatherInfo.clone();
+    }
+    
+    public static List<TempInfo> createWeatherInfoList(HttpResponse response){
+        List<TempInfo> weatherInfoReturnList = new  List<TempInfo>();
+        String responseString = response.getBody();
+        responseString= responseString.replaceAll( 'list', 'lister');
+        OpenWeatherMapClass owmClass = new OpenWeatherMapClass();
+        owmClass = OpenWeatherMapClass.parse(responseString);
+        for(Integer listerInt = 0; listerInt<owmClass.lister.size();listerInt++){
+            String listerJson = JSON.serialize(owmClass.lister[listerInt]);
+            cls_list cls = new cls_list();
+            cls = cls_list.parse(listerJson);
+            String clsJson = JSON.serialize(cls.main);
+            cls_main main = new cls_main();
+            main = cls_main.parse(clsJson);
+            weatherInfoReturnList.add( new TempInfo(String.valueOf(cls.dt_txt), WeatherCallout.convertTemperature(main.temp)));
+        }
+        return weatherInfoReturnList;
+    }
+    
+    public static String convertTemperature(Double doubleTemperature){
+        doubleTemperature = doubleTemperature - 273.15;
+        Decimal decimalTemperature = (Decimal)doubleTemperature;
+        String finalStringTemperature = String.valueOf(decimalTemperature.setscale(1));
+        return finalStringTemperature;
+    }
+    
+    public class TempInfo{
+        public String dateInfo { get; set; }
+        public String tempInfo { get; set; }
+        
+        public TempInfo(String dateConstructor, String tempConstructor){
+            this.dateInfo = dateConstructor;
+            this.tempInfo = tempConstructor;
+        }
+    }
+}
