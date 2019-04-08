@@ -1,0 +1,48 @@
+@isTest(SeeAllData=false)
+public class Visualforce_25_Three_controller_Test {
+    @isTest static void Testmeth1y() {
+        List<Contact> conList = new List<Contact>();
+        for(Integer i = 0;i<1000;i++){
+            Contact p = new Contact(LastName = 'testVF'+i);
+            conList.add(p);
+        }
+        insert conList;
+        Test.startTest();
+        PageReference pageRef = Page.test1_page;//Observe how we set the Page here
+        Test.setCurrentPage(pageRef);
+        ApexPages.StandardSetController stdSetController = new ApexPages.StandardSetController(conList);
+        stdSetController.setSelected(conList);
+        Visualforce_25_Three_controller testClassInstance = new Visualforce_25_Three_controller(stdSetController);
+        testClassInstance.searchName='t';
+        testClassInstance.searchEmail=null;
+        testClassInstance.searchAccountName=null;
+        testClassInstance.searchPhone=null;
+        testClassInstance.searchMobile=null;
+        testClassInstance.searchTitle=null;
+        testClassInstance.search();
+        testClassInstance.sortByContactName();
+        testClassInstance.getSortingOrder();
+        testClassInstance.setCon = null;
+        ApexPages.StandardSetController t = testClassInstance.setCon;
+        List<Contact> testContacts = testClassInstance.getContacts();
+        System.assertEquals(20, testContacts.size());
+        
+        testClassInstance.setCon.setPageSize(testClassInstance.setCon.getResultSize());
+        List<Contact> contactSelectedList = (List<Contact>) testClassInstance.setCon.getRecords();
+        System.assertEquals(1000, contactSelectedList.size());
+        
+        testClassInstance.sortingOrder = ' ORDER BY Name DESC NULLS LAST ';
+        testClassInstance.sortByContactName();
+        testClassInstance.searchEmail='null';
+        testClassInstance.searchAccountName='null';
+        testClassInstance.searchPhone='null';
+        testClassInstance.searchMobile='null';
+        testClassInstance.searchTitle='null';
+        testClassInstance.search();        
+        List<Contact> testContactsNull = testClassInstance.getContacts();
+        
+        System.assertEquals(testContactsNull.size(), 0);
+        Test.stopTest();
+        
+    }
+}
