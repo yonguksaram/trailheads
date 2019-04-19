@@ -1,0 +1,59 @@
+List<Insider_Pricebook__mdt> testList = [SELECT Label, DeveloperName, Price__c, End_Users_Number__c, Start_Users_Number__c, Currency__c, Publication__c, Publication_Code__c
+                                 FROM Insider_Pricebook__mdt
+                                 ];
+System.debug(testList.size());
+
+Metadata.DeployContainer mdContainer = new Metadata.DeployContainer();
+for(Insider_Pricebook__mdt item : testList) {
+    Metadata.CustomMetadata customMetadata =  new Metadata.CustomMetadata();
+    customMetadata.fullName = 'Insider_Pricebook.'+item.DeveloperName.replace('II', 'IPC');
+    customMetadata.label = item.Label.replace('II', 'IPC');
+    
+    Metadata.CustomMetadataValue priceField = new Metadata.CustomMetadataValue();
+    priceField.field = 'Price__c';
+    priceField.value = item.Price__c;
+    customMetadata.values.add(priceField);
+    
+    Metadata.CustomMetadataValue End_Users_NumberField = new Metadata.CustomMetadataValue();
+    End_Users_NumberField.field = 'End_Users_Number__c';
+    End_Users_NumberField.value = item.End_Users_Number__c;
+    customMetadata.values.add(End_Users_NumberField);
+    
+    Metadata.CustomMetadataValue Start_Users_NumberField = new Metadata.CustomMetadataValue();
+    Start_Users_NumberField.field = 'Start_Users_Number__c';
+    Start_Users_NumberField.value = item.Start_Users_Number__c;
+    customMetadata.values.add(Start_Users_NumberField);
+    
+        Metadata.CustomMetadataValue CurrencyField = new Metadata.CustomMetadataValue();
+    CurrencyField.field = 'Currency__c';
+    CurrencyField.value = item.Currency__c;
+    customMetadata.values.add(CurrencyField);
+    
+        Metadata.CustomMetadataValue PublicationField = new Metadata.CustomMetadataValue();
+    PublicationField.field = 'Publication__c';
+    PublicationField.value = item.Publication__c;
+    customMetadata.values.add(PublicationField);
+    
+        Metadata.CustomMetadataValue Publication_CodeField = new Metadata.CustomMetadataValue();
+    Publication_CodeField.field = 'Publication_Code__c';
+    Publication_CodeField.value = item.Publication_Code__c;
+    customMetadata.values.add(Publication_CodeField);
+    
+    mdContainer.addMetadata(customMetadata);
+}
+
+CustomMetadataCallback callback = new CustomMetadataCallback();
+Id jobId = Metadata.Operations.enqueueDeployment(mdContainer, callback);
+
+//It's necessary to create this class:
+public class CustomMetadataCallback implements Metadata.DeployCallback {
+    public void handleResult(Metadata.DeployResult result,
+                             Metadata.DeployCallbackContext context) {
+        if (result.status == Metadata.DeployStatus.Succeeded) {
+            System.debug('success: '+ result);
+        } else {
+            // Deployment was not successful
+            System.debug('fail: '+ result);
+        }
+    }
+}
